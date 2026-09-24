@@ -104,7 +104,7 @@ private val demoInterval = Choice(2 * MINUTE, "2 minutes", "Demo · devnet")
 
 private val graces = listOf(
     Choice(0, "None", "Strict"),
-    Choice(HOUR, "1 hour", ""),
+    Choice(HOUR, "1 hour", "Tight"),
     Choice(DAY, "1 day", "Recommended"),
     Choice(7 * DAY, "7 days", "Travel-proof"),
     Choice(30 * DAY, "30 days", "Very forgiving"),

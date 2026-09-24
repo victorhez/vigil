@@ -80,7 +80,7 @@ class ScreenshotTest {
     private val dadsVault = vault(dad, 3 * 86_400, listOf(Heir(me, 5_000), Heir(maya, 5_000)), streak = 0)
 
     private val sol = Asset(null, "SOL", "Solana", 12_491_000_000, 9)
-    private val skr = Asset(KnownTokens.SKR, "SKR", "Seeker", 25_000_000_000, 6, featured = true)
+    private val skr = Asset(KnownTokens.SKR, "SKR", "Solana Mobile", 25_000_000_000, 6, featured = true)
     private val usdc = Asset(PublicKey.of("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"), "USDC", "USD Coin", 1_200_000_000, 6)
 
     private val state = VigilState(

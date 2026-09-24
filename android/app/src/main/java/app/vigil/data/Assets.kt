@@ -16,7 +16,7 @@ object KnownTokens {
     val SKR: PublicKey = PublicKey.of("SKRbvo6Gf7GondiT3BbTfuRDPqLWei4j2Qy2NPGZhW3")
 
     private val registry = mapOf(
-        SKR to TokenInfo("SKR", "Seeker", featured = true),
+        SKR to TokenInfo("SKR", "Solana Mobile", featured = true),
         PublicKey.of("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v") to TokenInfo("USDC", "USD Coin"),
         PublicKey.of("4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU") to TokenInfo("USDC", "USD Coin · devnet"),
         PublicKey.of("Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB") to TokenInfo("USDT", "Tether USD"),

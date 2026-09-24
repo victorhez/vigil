@@ -89,6 +89,14 @@ A dead man's switch only works if you actually check in, so the check-in itself 
 
 SKR (`SKRbvo6Gf7GondiT3BbTfuRDPqLWei4j2Qy2NPGZhW3`) is recognised and featured across the app. It's pinned to the top of every asset list, tagged **Seeker**, and gets a dedicated **Protect your SKR** prompt whenever you hold SKR that isn't covered by your vault. Release works for SKR exactly as for any SPL or Token-2022 asset.
 
+## Try it
+
+1. Install the APK from the [latest release](https://github.com/victorhez/vigil/releases/latest) on an Android 11+ phone (Seeker, or any phone with a Mobile Wallet Adapter wallet such as Phantom or Solflare set to devnet).
+2. Connect your wallet. In **Settings → Get 1 devnet SOL** if you need funds.
+3. **Light your Vigil** with the **2 minutes** rhythm and **1 minute** grace (devnet-only options), a second wallet of yours as heir, and 0.1 SOL.
+4. **Hold to clock in** a couple of times and watch the streak and the on-chain log update.
+5. Stop checking in. Three minutes later, open **Legacies** from the heir wallet and tap **Release to all heirs**.
+
 ## Security model
 
 | Actor | Can | Cannot |
@@ -148,7 +156,7 @@ android/                 Native Android app (Kotlin, Jetpack Compose)
 docs/                    Architecture, security notes, pitch, screenshots
 ```
 
-The Android client has no Solana SDK dependency beyond Mobile Wallet Adapter. Transaction encoding, PDA derivation and account decoding are implemented in ~500 lines and verified byte-for-byte against `@solana/web3.js` in [`SolanaCompatTest`](android/app/src/test/java/app/vigil/solana/SolanaCompatTest.kt).
+The Android client has no Solana SDK dependency beyond Mobile Wallet Adapter. Transaction encoding, PDA derivation and account decoding are implemented in about 700 lines and verified byte-for-byte against `@solana/web3.js` in [`SolanaCompatTest`](android/app/src/test/java/app/vigil/solana/SolanaCompatTest.kt).
 
 ## Build
 

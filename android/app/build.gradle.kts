@@ -45,7 +45,11 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs.findByName("release") ?: signingConfigs.getByName("debug")
+            // -Pvigil.unsigned produces an unsigned APK for signing elsewhere (e.g. apksigner on a separate machine).
+            signingConfig = when {
+                providers.gradleProperty("vigil.unsigned").isPresent -> null
+                else -> signingConfigs.findByName("release") ?: signingConfigs.getByName("debug")
+            }
         }
     }
 
