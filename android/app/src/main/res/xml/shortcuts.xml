@@ -1,0 +1,13 @@
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="check_in"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_check_in"
+        android:shortcutShortLabel="@string/shortcut_check_in_short"
+        android:shortcutLongLabel="@string/shortcut_check_in_long">
+        <intent
+            android:action="app.vigil.action.CHECK_IN"
+            android:targetPackage="app.vigil"
+            android:targetClass="app.vigil.MainActivity" />
+    </shortcut>
+</shortcuts>

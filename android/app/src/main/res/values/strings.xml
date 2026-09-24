@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Vigil</string>
+    <string name="widget_name">Vigil check-in</string>
+    <string name="widget_description">Countdown to your next check-in, with one-tap clock in.</string>
+    <string name="tile_label">Clock in</string>
+    <string name="shortcut_check_in_short">Clock in</string>
+    <string name="shortcut_check_in_long">Clock in to Vigil</string>
+</resources>
