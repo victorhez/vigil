@@ -1,0 +1,18 @@
+{
+  "name": "vigil-program",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "cargo build-sbf",
+    "test": "cargo test --lib",
+    "test:e2e": "tsx tests/e2e.ts",
+    "deploy": "tsx scripts/deploy.ts"
+  },
+  "devDependencies": {
+    "@solana/spl-token": "^0.4.13",
+    "@solana/web3.js": "^1.98.4",
+    "@types/node": "^24.13.6",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}
