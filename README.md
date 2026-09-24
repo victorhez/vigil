@@ -16,6 +16,8 @@ You clock in on a rhythm you choose (daily, weekly, monthly) with a single hold 
 
 No custodian. No lawyer. No seed phrase in an envelope.
 
+**[vigil-seeker.vercel.app](https://vigil-seeker.vercel.app)** · [Download the APK](https://github.com/victorhez/vigil/releases/latest) · [Program on Solana Explorer](https://explorer.solana.com/address/VigddEZM9A4TuLmKFkY5qwVA5eCDDniEPJ4gmGQM512?cluster=devnet)
+
 <p align="center">
   <img src="docs/screens/02-pulse.png" width="24%" alt="Pulse">
   <img src="docs/screens/03-vault.png" width="24%" alt="Vault">
@@ -153,7 +155,8 @@ android/                 Native Android app (Kotlin, Jetpack Compose)
     ui/                  Design system, Pulse dial, screens
     widget/ system/      Glance widget, Quick Settings tile, reminders, haptics
   app/src/test/          web3.js compatibility tests, Roborazzi screenshots
-docs/                    Architecture, security notes, pitch, screenshots
+site/                    Landing page (vigil-seeker.vercel.app), also the wallet identity
+docs/                    Security notes, demo script, screenshots
 ```
 
 The Android client has no Solana SDK dependency beyond Mobile Wallet Adapter. Transaction encoding, PDA derivation and account decoding are implemented in about 700 lines and verified byte-for-byte against `@solana/web3.js` in [`SolanaCompatTest`](android/app/src/test/java/app/vigil/solana/SolanaCompatTest.kt).

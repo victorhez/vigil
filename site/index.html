@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vigil · Proof-of-life vault for Solana Seeker</title>
+<meta name="description" content="Clock in once a day. If you ever go quiet, your crypto goes home to the people you chose. A native Android app and Solana program for the Seeker.">
+<meta property="og:title" content="Vigil">
+<meta property="og:description" content="A proof-of-life vault for the Solana Seeker.">
+<meta name="theme-color" content="#0B0A09">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0B0A09; --surface: #151311; --line: #2A2622; --bone: #F4EEE4; --muted: #A39A8E; --faint: #6B635A;
+    --wick: #FFE3B0; --flame: #FFA24C; --ember: #FF6B35;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--ink); color: var(--bone); font: 400 17px/1.55 "Inter Tight", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 28px 0; }
+  .logo { font: italic 32px/1 "Instrument Serif", Georgia, serif; text-decoration: none; }
+  .mono { font: 500 12px/1.4 "JetBrains Mono", monospace; letter-spacing: .16em; text-transform: uppercase; color: var(--faint); }
+  .hero { display: grid; grid-template-columns: 1.1fr 1fr; align-items: center; gap: 48px; padding: 48px 0 96px; }
+  h1 { font: 400 clamp(56px, 8vw, 104px)/0.95 "Instrument Serif", Georgia, serif; letter-spacing: -0.02em; }
+  h1 em, h2 em { color: var(--wick); }
+  .lede { font-size: 20px; color: var(--muted); max-width: 30ch; margin-top: 24px; }
+  .cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 36px; }
+  .btn { display: inline-flex; align-items: center; height: 54px; padding: 0 26px; border-radius: 999px; font-weight: 600; text-decoration: none; }
+  .btn.flame { background: linear-gradient(120deg, var(--wick), var(--flame) 55%, var(--ember)); color: var(--ink); }
+  .btn.ghost { border: 1px solid var(--line); }
+  .btn:focus-visible { outline: 2px solid var(--flame); outline-offset: 3px; }
+  .dial { width: 100%; max-width: 460px; justify-self: center; }
+  .dial .core { transform-origin: 50% 50%; animation: beat 1.15s infinite; }
+  @keyframes beat { 0%,100% { transform: scale(1) } 10% { transform: scale(1.07) } 22% { transform: scale(.995) } 30% { transform: scale(1.04) } 48% { transform: scale(1) } }
+  @media (prefers-reduced-motion: reduce) { .dial .core { animation: none } }
+  section { padding: 88px 0; border-top: 1px solid var(--line); }
+  h2 { font: 400 clamp(40px, 5vw, 64px)/1.02 "Instrument Serif", Georgia, serif; max-width: 18ch; }
+  .eyebrow { color: var(--flame); margin-bottom: 16px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 48px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 26px; padding: 28px; }
+  .card h3 { font-size: 21px; font-weight: 600; margin: 10px 0 8px; }
+  .card p { color: var(--muted); }
+  table { width: 100%; border-collapse: collapse; margin-top: 40px; }
+  th, td { text-align: left; padding: 16px 12px 16px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-weight: 500; color: var(--faint); }
+  td:first-child { color: var(--wick); white-space: nowrap; }
+  code { font: 500 14px "JetBrains Mono", monospace; color: var(--wick); word-break: break-all; }
+  footer { padding: 48px 0 64px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; color: var(--faint); }
+  @media (max-width: 820px) {
+    .hero { grid-template-columns: 1fr; padding-top: 16px; }
+    .dial { max-width: 320px; order: -1; }
+    .grid { grid-template-columns: 1fr; }
+    td:first-child { white-space: normal; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <a class="logo" href="/">vigil</a>
+    <span class="mono">Solana · Seeker</span>
+  </nav>
+
+  <header class="hero">
+    <div>
+      <p class="mono eyebrow">Proof-of-life vault</p>
+      <h1>Crypto has no <em>next of kin.</em></h1>
+      <p class="lede">Clock in once a day with a hold and a fingerprint. If you ever go quiet, your SOL, SKR and tokens go home to the people you chose.</p>
+      <div class="cta">
+        <a class="btn flame" href="https://github.com/victorhez/vigil/releases/latest">Download for Android</a>
+        <a class="btn ghost" href="https://github.com/victorhez/vigil">View source</a>
+      </div>
+    </div>
+    <svg class="dial" viewBox="0 0 400 400" role="img" aria-label="Vigil pulse dial with most of the time remaining">
+      <defs>
+        <radialGradient id="g" cx=".5" cy=".53" r=".5"><stop offset="0" stop-color="#FFF4DC"/><stop offset=".3" stop-color="#FFE3B0"/><stop offset=".62" stop-color="#FFA24C"/><stop offset=".86" stop-color="#FF6B35" stop-opacity=".35"/><stop offset="1" stop-color="#FF6B35" stop-opacity="0"/></radialGradient>
+        <radialGradient id="h" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#FFA24C" stop-opacity=".22"/><stop offset="1" stop-color="#FFA24C" stop-opacity="0"/></radialGradient>
+      </defs>
+      <circle cx="200" cy="200" r="200" fill="url(#h)"/>
+      <circle class="core" cx="200" cy="200" r="112" fill="url(#g)"/>
+      <g id="ticks" stroke-linecap="round"></g>
+    </svg>
+  </header>
+</div>
+
+<section>
+  <div class="wrap">
+    <p class="mono eyebrow">How it works</p>
+    <h2>Three steps. <em>One habit.</em></h2>
+    <div class="grid">
+      <div class="card"><span class="mono">01</span><h3>Light it</h3><p>Choose up to five heirs with shares, a rhythm and a grace period. One wallet approval creates the vault and deposits what you want protected.</p></div>
+      <div class="card"><span class="mono">02</span><h3>Clock in</h3><p>Hold, touch the sensor. A key sealed in your phone's hardware keystore signs a tiny pulse on Solana. No wallet pop-up.</p></div>
+      <div class="card"><span class="mono">03</span><h3>If you go quiet</h3><p>After your window and grace period, anyone can trigger the release. The program splits every lamport and token by the on-chain shares.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="mono eyebrow">Security model</p>
+    <h2>A stolen phone <em>is not stolen funds.</em></h2>
+    <table>
+      <tr><th>Actor</th><th>Can</th><th>Cannot</th></tr>
+      <tr><td>Owner wallet</td><td>Everything, until release</td><td>Act after release</td></tr>
+      <tr><td>Pulse key (phone)</td><td>Check in while the vault is alive</td><td>Move funds or revive an expired vault</td></tr>
+      <tr><td>Anyone</td><td>Release after expiry</td><td>Release early or choose recipients</td></tr>
+    </table>
+  </div>
+</section>
+
+<div class="wrap">
+  <footer>
+    <span>Program <code>VigddEZM9A4TuLmKFkY5qwVA5eCDDniEPJ4gmGQM512</code> · devnet</span>
+    <a href="https://github.com/victorhez/vigil">github.com/victorhez/vigil</a>
+  </footer>
+</div>
+
+<script>
+  const g = document.getElementById('ticks');
+  for (let i = 0; i < 60; i++) {
+    const a = (i * 6 - 90) * Math.PI / 180, major = i % 5 === 0;
+    const r1 = major ? 158 : 166, r2 = 184;
+    const l = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    l.setAttribute('x1', 200 + Math.cos(a) * r1); l.setAttribute('y1', 200 + Math.sin(a) * r1);
+    l.setAttribute('x2', 200 + Math.cos(a) * r2); l.setAttribute('y2', 200 + Math.sin(a) * r2);
+    l.setAttribute('stroke', i < 44 ? '#FFA24C' : '#3A3530');
+    l.setAttribute('stroke-width', major ? 4.5 : 2.6);
+    g.appendChild(l);
+  }
+</script>
+</body>
+</html>
