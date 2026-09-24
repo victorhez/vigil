@@ -6,6 +6,7 @@
  *   VIGIL_PAYER=../.keys/deployer.json VIGIL_PROGRAM_KEYPAIR=../.keys/vigil-program.json npm run deploy
  *
  * The payer becomes the upgrade authority. Re-running against an existing program performs an upgrade.
+ * Set VIGIL_BUFFER to an existing buffer address to resume an interrupted upload; only missing chunks are written.
  */
 import { readFileSync } from "node:fs";
 import {
@@ -25,7 +26,7 @@ const LOADER = new PublicKey("BPFLoaderUpgradeab1e11111111111111111111111");
 const RPC = process.env.VIGIL_RPC ?? "https://api.devnet.solana.com";
 const SO_PATH = process.env.VIGIL_SO ?? "target/deploy/vigil.so";
 const CHUNK = 950;
-const PARALLEL = 16;
+const PARALLEL = 4;
 
 const loadKeypair = (path: string) => Keypair.fromSecretKey(Uint8Array.from(JSON.parse(readFileSync(path, "utf8"))));
 const payer = loadKeypair(process.env.VIGIL_PAYER ?? "../.keys/deployer.json");
@@ -90,7 +91,8 @@ async function main() {
   const [programData] = PublicKey.findProgramAddressSync([program.toBuffer()], LOADER);
   const existing = await connection.getAccountInfo(program);
 
-  const bufferRent = await connection.getMinimumBalanceForRentExemption(BUFFER_HEADER + so.length);
+  const resume = process.env.VIGIL_BUFFER ? new PublicKey(process.env.VIGIL_BUFFER) : null;
+  const bufferRent = resume ? 0 : await connection.getMinimumBalanceForRentExemption(BUFFER_HEADER + so.length);
   const dataRent = existing ? 0 : await connection.getMinimumBalanceForRentExemption(PROGRAMDATA_HEADER + so.length);
   const balance = await connection.getBalance(payer.publicKey);
   const needed = bufferRent + dataRent + 0.02 * LAMPORTS_PER_SOL;
@@ -100,47 +102,64 @@ async function main() {
   console.log(`binary      ${so.length} bytes, needs ~${(needed / LAMPORTS_PER_SOL).toFixed(3)} SOL`);
   if (balance < needed) throw new Error("payer balance too low");
 
-  const buffer = Keypair.generate();
-  await sendAndConfirmTransaction(connection, new Transaction().add(
-    SystemProgram.createAccount({
-      fromPubkey: payer.publicKey,
-      newAccountPubkey: buffer.publicKey,
-      lamports: bufferRent,
-      space: BUFFER_HEADER + so.length,
-      programId: LOADER,
-    }),
-    initializeBuffer(buffer.publicKey, payer.publicKey),
-  ), [payer, buffer]);
-  console.log(`buffer      ${buffer.publicKey.toBase58()}`);
+  let bufferKey: PublicKey;
+  let written: Buffer | null = null;
+  if (resume) {
+    bufferKey = resume;
+    written = (await connection.getAccountInfo(bufferKey))?.data.subarray(BUFFER_HEADER) ?? null;
+    if (!written || written.length !== so.length) throw new Error("VIGIL_BUFFER is not a buffer of the right size");
+  } else {
+    const buffer = Keypair.generate();
+    bufferKey = buffer.publicKey;
+    await sendAndConfirmTransaction(connection, new Transaction().add(
+      SystemProgram.createAccount({
+        fromPubkey: payer.publicKey,
+        newAccountPubkey: bufferKey,
+        lamports: bufferRent,
+        space: BUFFER_HEADER + so.length,
+        programId: LOADER,
+      }),
+      initializeBuffer(bufferKey, payer.publicKey),
+    ), [payer, buffer]);
+  }
+  console.log(`buffer      ${bufferKey.toBase58()}${resume ? " (resumed)" : ""}`);
 
   const offsets: number[] = [];
-  for (let o = 0; o < so.length; o += CHUNK) offsets.push(o);
-  let done = 0;
-  const writeChunk = async (offset: number) => {
-    for (let attempt = 0; ; attempt++) {
+  for (let o = 0; o < so.length; o += CHUNK) {
+    const chunk = so.subarray(o, o + CHUNK);
+    if (!written || !written.subarray(o, o + chunk.length).equals(chunk)) offsets.push(o);
+  }
+  // Public RPCs throttle hard: send sequentially, confirm in batches, then re-check the buffer and retry gaps.
+  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+  for (let round = 0; offsets.length > 0 && round < 8; round++) {
+    const { blockhash } = await connection.getLatestBlockhash();
+    for (let i = 0; i < offsets.length; i++) {
+      const offset = offsets[i];
+      const tx = new Transaction({ feePayer: payer.publicKey, recentBlockhash: blockhash })
+        .add(write(bufferKey, payer.publicKey, offset, so.subarray(offset, offset + CHUNK)));
+      tx.sign(payer);
       try {
-        await sendAndConfirmTransaction(
-          connection,
-          new Transaction().add(write(buffer.publicKey, payer.publicKey, offset, so.subarray(offset, offset + CHUNK))),
-          [payer],
-        );
-        done++;
-        if (done % 25 === 0 || done === offsets.length) process.stdout.write(`\rwriting     ${done}/${offsets.length}`);
-        return;
-      } catch (e) {
-        if (attempt >= 5) throw e;
-        await new Promise((r) => setTimeout(r, 1000 * (attempt + 1)));
+        await connection.sendRawTransaction(tx.serialize(), { skipPreflight: true });
+      } catch {
+        await sleep(2000);
       }
+      if (i % 20 === 19 || i === offsets.length - 1) process.stdout.write(`writing     round ${round + 1}: ${i + 1}/${offsets.length}`);
+      await sleep(120);
     }
-  };
-  for (let i = 0; i < offsets.length; i += PARALLEL) await Promise.all(offsets.slice(i, i + PARALLEL).map(writeChunk));
-  console.log();
+    await sleep(8000);
+    const data = (await connection.getAccountInfo(bufferKey, "confirmed"))!.data.subarray(BUFFER_HEADER);
+    const missing = offsets.filter((o) => !data.subarray(o, o + CHUNK).equals(so.subarray(o, o + CHUNK)));
+    offsets.splice(0, offsets.length, ...missing);
+    process.stdout.write(`  (${missing.length} missing)
+`);
+  }
+  if (offsets.length > 0) throw new Error(`${offsets.length} chunks could not be written`);
 
-  const onChain = await connection.getAccountInfo(buffer.publicKey);
+  const onChain = await connection.getAccountInfo(bufferKey);
   if (!onChain || !onChain.data.subarray(BUFFER_HEADER).equals(so)) throw new Error("buffer contents do not match the binary");
 
   const sig = existing
-    ? await sendAndConfirmTransaction(connection, new Transaction().add(upgrade(program, programData, buffer.publicKey)), [payer])
+    ? await sendAndConfirmTransaction(connection, new Transaction().add(upgrade(program, programData, bufferKey)), [payer])
     : await sendAndConfirmTransaction(connection, new Transaction().add(
         SystemProgram.createAccount({
           fromPubkey: payer.publicKey,
@@ -149,7 +168,7 @@ async function main() {
           space: PROGRAM_SIZE,
           programId: LOADER,
         }),
-        deploy(program, programData, buffer.publicKey, so.length),
+        deploy(program, programData, bufferKey, so.length),
       ), [payer, programKp]);
 
   console.log(`${existing ? "upgraded" : "deployed"}    ${sig}`);

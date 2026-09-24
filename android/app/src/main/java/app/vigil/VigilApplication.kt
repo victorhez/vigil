@@ -16,7 +16,7 @@ class AppContainer(context: Context) {
     val pulseKeys = PulseKeyStore(context)
 }
 
-class VigilApplication : Application() {
+open class VigilApplication : Application() {
     lateinit var container: AppContainer
         private set
 

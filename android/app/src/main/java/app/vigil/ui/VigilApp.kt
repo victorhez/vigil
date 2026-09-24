@@ -153,7 +153,7 @@ private fun Booting() {
 }
 
 @Composable
-private fun MainShell(
+internal fun MainShell(
     state: VigilState,
     viewModel: VigilViewModel,
     tab: Tab,

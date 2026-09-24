@@ -90,13 +90,13 @@ async function send(signers: Keypair[], ...ixs: TransactionInstruction[]) {
   return sendAndConfirmTransaction(connection, new Transaction().add(...ixs), signers, { commitment: "confirmed" });
 }
 
-async function expectError(code: string, signers: Keypair[], ...ixs: TransactionInstruction[]) {
+async function expectError(code: string | string[], signers: Keypair[], ...ixs: TransactionInstruction[]) {
   try {
     await send(signers, ...ixs);
   } catch (e) {
     const logs = e instanceof SendTransactionError ? (await e.getLogs(connection)) ?? [] : [];
     const text = `${(e as Error).message}\n${logs.join("\n")}`;
-    if (text.includes(code)) return;
+    if ((Array.isArray(code) ? code : [code]).some((c) => text.includes(c))) return;
     throw new Error(`expected ${code}, got:\n${text}`);
   }
   throw new Error(`expected ${code}, but the transaction succeeded`);
@@ -150,7 +150,10 @@ async function main() {
     );
     const v = await fetchVault(owner.publicKey);
     if (!v.owner.equals(owner.publicKey) || !v.pulseKey.equals(pulse.publicKey)) throw new Error("bad keys");
-    if (v.interval !== INTERVAL || v.heirs.length !== 2 || v.totalPulses !== 1 || v.streak !== 1) throw new Error("bad state");
+    // The owner's deposit in the same transaction also counts as a check-in.
+    if (v.interval !== INTERVAL || v.heirs.length !== 2 || v.totalPulses !== 2 || v.streak !== 1) {
+      throw new Error(`bad state ${JSON.stringify({ interval: v.interval, heirs: v.heirs.length, pulses: v.totalPulses, streak: v.streak })}`);
+    }
   });
 
   const mintAuthority = funder;
@@ -179,7 +182,8 @@ async function main() {
   });
 
   await step("pulse key cannot withdraw", async () => {
-    await expectError("ConstraintHasOne", [pulse], ix("withdraw", [s(pulse.publicKey, true), w(vault)], u64(1)));
+    // Anchor checks the vault seeds (derived from the signer) before has_one.
+    await expectError(["ConstraintSeeds", "ConstraintHasOne"], [pulse], ix("withdraw", [s(pulse.publicKey, true), w(vault)], u64(1)));
   });
 
   await step("release is refused while the owner is alive", async () => {
