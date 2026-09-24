@@ -6,7 +6,7 @@ object Programs {
     val SYSTEM = PublicKey.of("11111111111111111111111111111111")
     val TOKEN = PublicKey.of("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")
     val TOKEN_2022 = PublicKey.of("TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb")
-    val ASSOCIATED_TOKEN = PublicKey.of("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNrLJA8knL")
+    val ASSOCIATED_TOKEN = PublicKey.of("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL")
 }
 
 object SystemProgram {
