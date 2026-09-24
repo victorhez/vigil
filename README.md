@@ -1,6 +1,6 @@
 <p align="center">
   <img src="docs/assets/banner.svg" alt="Vigil" width="100%">
-</p>
+</p> 
 
 <p align="center">
   <a href="#build"><img alt="Android" src="https://img.shields.io/badge/Android-11%2B-0B0A09?logo=android&logoColor=FFA24C"></a>
