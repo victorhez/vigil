@@ -1,0 +1,26 @@
+# Secrets
+.keys/
+*.jks
+*.keystore
+keystore.properties
+.env
+
+# Solana / Rust
+program/target/
+program/.cargo/
+
+# Node
+**/node_modules/
+
+# Android / Gradle
+android/.gradle/
+android/.kotlin/
+android/build/
+android/app/build/
+android/local.properties
+android/captures/
+
+# IDE / OS
+.idea/
+*.iml
+.DS_Store
