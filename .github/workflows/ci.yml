@@ -40,6 +40,8 @@ jobs:
           distribution: temurin
           java-version: 21
       - uses: gradle/actions/setup-gradle@v4
+      - name: Make Gradle wrapper executable
+        run: chmod +x android/gradlew
       - name: Unit tests
         working-directory: android
         run: ./gradlew testDebugUnitTest
